@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.IO;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading;
-using NetWorkSpeedMonitor;
+using log4net;
+using Topshelf;
 
-namespace Demo
+namespace networkspeedmonitor
 {
-    class MonitorNetStream
+    internal class MonitorNetStream
     {
-        
+        ILog _log = LogManager.GetLogger(typeof(MonitorNetStream));
+
         public MonitorNetStream()
         {
-         
+            log4net.Config.XmlConfigurator.ConfigureAndWatch(new FileInfo(AppDomain.CurrentDomain.BaseDirectory + "log4net.config"));
             List<PerformanceCounter> pcs = new List<PerformanceCounter>();
             List<PerformanceCounter> pcs2 = new List<PerformanceCounter>();
             string[] names = GetAdapter();
@@ -72,10 +73,10 @@ namespace Demo
                 {
                     sent += Convert.ToInt32(pc.NextValue()) / 1000;
                 }
-                Console.WriteLine("recv:"+recv + "mbps" + ",send:" + sent + "mbps");
-                Thread.Sleep(500);
-                Console.WriteLine("---------------------------------------");
+                _log.Info("接收:" + recv + "mbps" + ",发送:" + sent + "mbps");
+                Thread.Sleep(1000);
             }
         }
+
     }
 }
